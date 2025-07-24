@@ -45,6 +45,25 @@ const handleSeatClick = (seatId) =>{
       setSelectedSeats(prev => prev.includes(seatId) ? prev.filter(seat => seat !== seatId) : [...prev, seatId])
   }
 
+
+   const bookTickets = async ()=>{
+    try {
+      if(!user) return toast.error('Please login to proceed')
+
+        if(!selectedTime || !selectedSeats.length) return toast.error('Please select a time and seats');
+
+        const {data} = await axios.post('/api/booking/create', {showId: selectedTime.showId, selectedSeats}, {headers: { Authorization: `Bearer ${await getToken()}` }});
+
+        if (data.success){
+          window.location.href = data.url;
+        }else{
+          toast.error(data.message)
+        }
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+  
 const renderSeats = (row, count = 9)=>(
     <div key={row} className="flex gap-2 mt-2">
             <div className="flex flex-wrap items-center justify-center gap-2">
